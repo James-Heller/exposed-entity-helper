@@ -8,9 +8,23 @@ KSP processor for generating Exposed `EnhanceTable` objects from annotated Kotli
 - `processor`: KSP processor that generates table objects.
 - `sample`: minimal integration sample that verifies generated code against Exposed.
 
+## Build
+
+Build the single helper jar:
+
+```shell
+./gradlew helperJar
+```
+
+The jar is written to:
+
+```text
+build/libs/expose-entity-helper-1.0-SNAPSHOT.jar
+```
+
 ## Usage
 
-Add the annotations dependency to regular compilation and the processor to KSP:
+Copy the helper jar into your application, then add the same jar to regular compilation and KSP:
 
 ```kotlin
 plugins {
@@ -19,8 +33,8 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":annotations"))
-    ksp(project(":processor"))
+    implementation(files("libs/expose-entity-helper-1.0-SNAPSHOT.jar"))
+    ksp(files("libs/expose-entity-helper-1.0-SNAPSHOT.jar"))
 }
 ```
 
