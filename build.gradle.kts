@@ -1,5 +1,7 @@
 plugins {
+    base
     kotlin("jvm") version "2.3.20" apply false
+    id("org.jetbrains.kotlin.plugin.serialization") version "2.3.20" apply false
     id("com.google.devtools.ksp") version "2.3.0" apply false
 }
 

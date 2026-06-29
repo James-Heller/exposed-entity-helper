@@ -19,7 +19,8 @@ internal class ExposedEntityProcessor(
 ) : SymbolProcessor {
     private val codeGenerator: CodeGenerator = environment.codeGenerator
     private val logger: KSPLogger = environment.logger
-    private val enhanceTableType = environment.options["exposedEntityHelper.enhanceTableClass"] ?: "EnhanceTable"
+    private val enhanceTableType = environment.options["exposedEntityHelper.enhanceTableClass"]
+        ?: "pers.jamestang.exposed.entity.EnhanceTable"
     private val processedClasses = mutableSetOf<String>()
 
     override fun process(resolver: Resolver): List<KSAnnotated> {

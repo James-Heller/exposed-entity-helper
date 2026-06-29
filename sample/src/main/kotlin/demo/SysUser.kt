@@ -2,6 +2,7 @@ package demo
 
 import kotlinx.datetime.LocalDateTime
 import pers.jamestang.exposed.entity.Column
+import pers.jamestang.exposed.entity.EnhanceEntity
 import pers.jamestang.exposed.entity.Entity
 
 @Entity(tableName = "sys_user")

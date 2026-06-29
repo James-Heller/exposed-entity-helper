@@ -29,14 +29,28 @@ Copy the helper jar into your application, then add the same jar to regular comp
 ```kotlin
 plugins {
     kotlin("jvm")
+    id("org.jetbrains.kotlin.plugin.serialization")
     id("com.google.devtools.ksp")
 }
 
 dependencies {
     implementation(files("libs/expose-entity-helper-1.0-SNAPSHOT.jar"))
     ksp(files("libs/expose-entity-helper-1.0-SNAPSHOT.jar"))
+
+    implementation("org.jetbrains.exposed:exposed-core:1.3.0")
+    implementation("org.jetbrains.exposed:exposed-kotlin-datetime:1.3.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.7.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.11.0")
 }
 ```
+
+The helper jar includes:
+
+- `pers.jamestang.exposed.entity.EnhanceEntity`
+- `pers.jamestang.exposed.entity.EnhanceTable`
+- `pers.jamestang.exposed.entity.Entity`
+- `pers.jamestang.exposed.entity.Column`
+- the KSP processor service registration
 
 Annotate your entity:
 
