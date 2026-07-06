@@ -38,6 +38,7 @@ dependencies {
     ksp(files("libs/expose-entity-helper-1.0-SNAPSHOT.jar"))
 
     implementation("org.jetbrains.exposed:exposed-core:1.3.0")
+    implementation("org.jetbrains.exposed:exposed-r2dbc:1.3.0")
     implementation("org.jetbrains.exposed:exposed-kotlin-datetime:1.3.0")
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.7.1")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.11.0")
@@ -51,6 +52,15 @@ The helper jar includes:
 - `pers.jamestang.exposed.entity.Entity`
 - `pers.jamestang.exposed.entity.Column`
 - the KSP processor service registration
+
+When adding shortcut methods inside `EnhanceTable`, use the R2DBC Exposed extensions:
+
+```kotlin
+import org.jetbrains.exposed.v1.r2dbc.deleteWhere
+import org.jetbrains.exposed.v1.r2dbc.insert
+import org.jetbrains.exposed.v1.r2dbc.selectAll
+import org.jetbrains.exposed.v1.r2dbc.update
+```
 
 Annotate your entity:
 
@@ -74,6 +84,26 @@ data class SysUser(
 ```
 
 The generated `SysUsers` object skips common `EnhanceEntity` fields for column declarations, but still maps them in `toEntity(row)`.
+
+Generated table objects include entity-specific write helpers:
+
+```kotlin
+val id: Int = SysUsers.insert(user)
+val affected: Int = SysUsers.update(user)
+```
+
+All generated table objects also inherit common R2DBC helpers:
+
+```kotlin
+SysUsers.selectById(id)
+SysUsers.listAll()
+SysUsers.list(where = { username eq "admin" })
+SysUsers.countAll()
+SysUsers.existsById(id)
+SysUsers.page(page = 1, size = 20)
+SysUsers.softDeleteById(id)
+SysUsers.restoreById(id)
+```
 
 By default the generated table extends `EnhanceTable`. If your base table class has a fully qualified name, pass it as a KSP option:
 

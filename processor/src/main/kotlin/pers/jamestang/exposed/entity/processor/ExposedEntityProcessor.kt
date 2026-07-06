@@ -88,13 +88,35 @@ internal class ExposedEntityProcessor(
                 appendLine("package $packageName")
                 appendLine()
                 appendLine("import org.jetbrains.exposed.v1.core.ResultRow")
+                appendLine("import org.jetbrains.exposed.v1.r2dbc.insertAndGetId")
                 appendLine()
                 appendLine("public object $objectName : $enhanceTableType<$className>(\"$tableName\") {")
                 columnProperties.forEach { property ->
                     appendLine("    public val ${property.name} = ${property.columnExpression()}")
                 }
                 appendLine()
-                appendLine("    override fun toEntity(row: ResultRow): $className {")
+                appendLine("    public suspend fun insert(entity: $className): Int {")
+                appendLine("        return insertAndGetId { statement ->")
+                parameters
+                    .filterNot { it.name == "id" || it.column.booleanArgument("ignore") }
+                    .forEach { property ->
+                        appendLine("            statement[${property.name}] = entity.${property.name}")
+                    }
+                appendLine("        }.value")
+                appendLine("    }")
+                appendLine()
+                appendLine("    public suspend fun update(entity: $className): Int {")
+                appendLine("        val entityId = requireNotNull(entity.id) { \"Cannot update $className without id.\" }")
+                appendLine("        return updateById(entityId) { statement ->")
+                parameters
+                    .filterNot { it.name == "id" || it.name == "createTime" || it.column.booleanArgument("ignore") }
+                    .forEach { property ->
+                        appendLine("            statement[${property.name}] = entity.${property.name}")
+                    }
+                appendLine("        }")
+                appendLine("    }")
+                appendLine()
+                appendLine("    override suspend fun toEntity(row: ResultRow): $className {")
                 appendLine("        return $className(")
                 parameters.forEach { property ->
                     appendLine("            ${property.name} = ${property.rowExpression()},")
