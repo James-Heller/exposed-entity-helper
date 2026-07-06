@@ -27,7 +27,7 @@ Build a single local helper jar containing both runtime APIs and the processor:
 The jar is written to:
 
 ```text
-build/libs/exposed-entity-helper-0.1.0-SNAPSHOT.jar
+build/libs/exposed-entity-helper-1.0.1.jar
 ```
 
 You can also publish split artifacts to Maven Local:
@@ -48,8 +48,8 @@ plugins {
 }
 
 dependencies {
-    implementation(files("libs/exposed-entity-helper-0.1.0-SNAPSHOT.jar"))
-    ksp(files("libs/exposed-entity-helper-0.1.0-SNAPSHOT.jar"))
+    implementation(files("libs/exposed-entity-helper-1.0.1.jar"))
+    ksp(files("libs/exposed-entity-helper-1.0.1.jar"))
 
     implementation("org.jetbrains.exposed:exposed-core:1.3.0")
     implementation("org.jetbrains.exposed:exposed-r2dbc:1.3.0")
@@ -68,8 +68,8 @@ repositories {
 }
 
 dependencies {
-    implementation("pers.jamestang.exposed:exposed-entity-helper-runtime:0.1.0-SNAPSHOT")
-    ksp("pers.jamestang.exposed:exposed-entity-helper-processor:0.1.0-SNAPSHOT")
+    implementation("pers.jamestang.exposed:exposed-entity-helper-runtime:1.0.1")
+    ksp("pers.jamestang.exposed:exposed-entity-helper-processor:1.0.1")
 }
 ```
 

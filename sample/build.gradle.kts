@@ -9,6 +9,7 @@ dependencies {
 
     implementation("org.jetbrains.exposed:exposed-core:1.3.0")
     implementation("org.jetbrains.exposed:exposed-kotlin-datetime:1.3.0")
+    testImplementation(kotlin("test"))
 }
 
 kotlin {
@@ -16,4 +17,8 @@ kotlin {
     compilerOptions {
         jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_25)
     }
+}
+
+tasks.test {
+    useJUnitPlatform()
 }

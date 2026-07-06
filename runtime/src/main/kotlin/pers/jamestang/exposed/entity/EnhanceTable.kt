@@ -21,7 +21,7 @@ import org.jetbrains.exposed.v1.r2dbc.selectAll
 import org.jetbrains.exposed.v1.r2dbc.update
 
 abstract class EnhanceTable<T : EnhanceEntity>(
-    override val tableName: String,
+    tableName: String,
 ) : IntIdTable(name = tableName) {
     val createTime = datetime("create_time")
     val updateTime = datetime("update_time").nullable()
