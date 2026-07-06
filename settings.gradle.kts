@@ -1,8 +1,8 @@
 plugins {
     id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
 }
-rootProject.name = "expose-entity-helper"
+rootProject.name = "exposed-entity-helper"
 
-include("annotations")
+include("runtime")
 include("processor")
 include("sample")

@@ -4,7 +4,7 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":annotations"))
+    implementation(project(":runtime"))
     ksp(project(":processor"))
 
     implementation("org.jetbrains.exposed:exposed-core:1.3.0")
@@ -13,4 +13,7 @@ dependencies {
 
 kotlin {
     jvmToolchain(25)
+    compilerOptions {
+        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_25)
+    }
 }

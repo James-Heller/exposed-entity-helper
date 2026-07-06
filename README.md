@@ -1,16 +1,24 @@
-# expose-entity-helper
+# exposed-entity-helper
 
-KSP processor for generating Exposed `EnhanceTable` objects from annotated Kotlin entity classes.
+KSP-based helpers for generating Exposed R2DBC table objects from Kotlin entity classes.
 
 ## Modules
 
-- `annotations`: compile-time annotations used by application code.
-- `processor`: KSP processor that generates table objects.
-- `sample`: minimal integration sample that verifies generated code against Exposed.
+- `runtime`: annotations, base entity/table classes, pagination model, and common R2DBC helpers.
+- `processor`: KSP processor that generates Exposed table objects.
+- `sample`: integration sample that verifies generated code against Exposed.
 
 ## Build
 
-Build the single helper jar:
+Requires JDK 25 or newer.
+
+Build and verify all modules:
+
+```shell
+./gradlew build
+```
+
+Build a single local helper jar containing both runtime APIs and the processor:
 
 ```shell
 ./gradlew helperJar
@@ -19,12 +27,18 @@ Build the single helper jar:
 The jar is written to:
 
 ```text
-build/libs/expose-entity-helper-1.0-SNAPSHOT.jar
+build/libs/exposed-entity-helper-0.1.0-SNAPSHOT.jar
+```
+
+You can also publish split artifacts to Maven Local:
+
+```shell
+./gradlew publishToMavenLocal
 ```
 
 ## Usage
 
-Copy the helper jar into your application, then add the same jar to regular compilation and KSP:
+For the single jar workflow, copy the helper jar into your application and add the same jar to regular compilation and KSP:
 
 ```kotlin
 plugins {
@@ -34,8 +48,8 @@ plugins {
 }
 
 dependencies {
-    implementation(files("libs/expose-entity-helper-1.0-SNAPSHOT.jar"))
-    ksp(files("libs/expose-entity-helper-1.0-SNAPSHOT.jar"))
+    implementation(files("libs/exposed-entity-helper-0.1.0-SNAPSHOT.jar"))
+    ksp(files("libs/exposed-entity-helper-0.1.0-SNAPSHOT.jar"))
 
     implementation("org.jetbrains.exposed:exposed-core:1.3.0")
     implementation("org.jetbrains.exposed:exposed-r2dbc:1.3.0")
@@ -45,24 +59,21 @@ dependencies {
 }
 ```
 
-The helper jar includes:
-
-- `pers.jamestang.exposed.entity.EnhanceEntity`
-- `pers.jamestang.exposed.entity.EnhanceTable`
-- `pers.jamestang.exposed.entity.Entity`
-- `pers.jamestang.exposed.entity.Column`
-- the KSP processor service registration
-
-When adding shortcut methods inside `EnhanceTable`, use the R2DBC Exposed extensions:
+For Maven Local split artifacts:
 
 ```kotlin
-import org.jetbrains.exposed.v1.r2dbc.deleteWhere
-import org.jetbrains.exposed.v1.r2dbc.insert
-import org.jetbrains.exposed.v1.r2dbc.selectAll
-import org.jetbrains.exposed.v1.r2dbc.update
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+dependencies {
+    implementation("pers.jamestang.exposed:exposed-entity-helper-runtime:0.1.0-SNAPSHOT")
+    ksp("pers.jamestang.exposed:exposed-entity-helper-processor:0.1.0-SNAPSHOT")
+}
 ```
 
-Annotate your entity:
+## Entity Example
 
 ```kotlin
 @Entity(tableName = "sys_user")
@@ -83,18 +94,11 @@ data class SysUser(
 ) : EnhanceEntity(id, createTime, updateTime, deleteTime, deleted)
 ```
 
-The generated `SysUsers` object skips common `EnhanceEntity` fields for column declarations, but still maps them in `toEntity(row)`.
-
-Generated table objects include entity-specific write helpers:
+The generated `SysUsers` object declares columns, maps `ResultRow` back to the entity, and includes:
 
 ```kotlin
-val id: Int = SysUsers.insert(user)
-val affected: Int = SysUsers.update(user)
-```
-
-All generated table objects also inherit common R2DBC helpers:
-
-```kotlin
+SysUsers.insert(user)
+SysUsers.update(user)
 SysUsers.selectById(id)
 SysUsers.listAll()
 SysUsers.list(where = { username eq "admin" })
@@ -105,7 +109,7 @@ SysUsers.softDeleteById(id)
 SysUsers.restoreById(id)
 ```
 
-By default the generated table extends `EnhanceTable`. If your base table class has a fully qualified name, pass it as a KSP option:
+By default generated tables extend `pers.jamestang.exposed.entity.EnhanceTable`. To use a custom base table, pass:
 
 ```kotlin
 ksp {

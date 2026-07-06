@@ -2,6 +2,7 @@ plugins {
     `java-library`
     kotlin("jvm")
     id("org.jetbrains.kotlin.plugin.serialization")
+    `maven-publish`
 }
 
 dependencies {
@@ -14,4 +15,20 @@ dependencies {
 
 kotlin {
     jvmToolchain(25)
+    compilerOptions {
+        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_25)
+    }
+}
+
+java {
+    withSourcesJar()
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("mavenJava") {
+            artifactId = "exposed-entity-helper-runtime"
+            from(components["java"])
+        }
+    }
 }
